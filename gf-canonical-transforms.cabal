@@ -1,0 +1,33 @@
+Name: gf-canonical-transforms
+Version: 0.1-git
+Cabal-version: >=1.10
+Build-Type: Simple
+Maintainer: Thomas Hallgren
+License: GPL
+Synopsis: Canonical-GF grammar transformation
+
+Flag developer
+  Description: Enable warnings useful for developers of this library
+  Manual:      True
+  Default:     False
+
+Library
+    Default-Language: Haskell2010
+    Build-Depends: base>=4.8 && <5,
+                   filepath, directory, containers,
+                   gf>=3.10.3
+    Hs-Source-Dirs: lib
+    Exposed-Modules: ConflateParams UnqualifyGrammar TQ M1 Utils WriteGrammar
+
+    if flag(developer)
+      ghc-options: -Wunused-imports -Wunused-binds
+
+Executable gf-conflate-params
+    Default-Language: Haskell2010
+    Build-Depends: base>4 && <5, gf>=3.10.3, gf-canonical-transforms
+    Main-is: gf-conflate-params.hs
+    
+    ghc-options: -rtsopts -with-rtsopts=-M2G
+
+    if flag(developer)
+      ghc-options: -Wunused-imports -Wunused-binds
