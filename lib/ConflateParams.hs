@@ -64,7 +64,7 @@ conflateParams1 eqn (Grammar abs [cnc]) =
                                  | (n,v')<-zip [1..] (nub' vs),
                                    let f'= funId f n]
 --}
-    funId (FunId f) n = FunId (f++"_"++show (n::Int))
+    funId (FunId f) n = FunId (f++"__"++show (n::Int))
 
     unqual (Qual _ n) = n
     unqual (Unqual n) = n
@@ -226,4 +226,4 @@ zipTR = zipWith TableRow
 requal (Unqual _) q = Unqual q
 requal (Qual m _) q = Qual m q
 
-mergedParam q cs = ParamId (requal q (intercalate "Or" cs))
+mergedParam q cs = ParamId (requal q (intercalate "__OR__" cs))
