@@ -18,10 +18,10 @@ runV (Table t bs) = map snd bs
 instance Applicative V where
   pure = Pure
   Pure f <*> Pure a = Pure (f a)
-  Pure f <*> Table t bs = Table t [(p,f v)|(p,v)<-bs]
-  Table t bs <*> Pure v = Table t [(p,f v)|(p,f)<-bs]
+  Pure f <*> Table t bs = Table t [(p,f v) | (p,v)<-bs]
+  Table t bs <*> Pure v = Table t [(p,f v) | (p,f)<-bs]
   Table tf fs <*> Table ta as =
-    Table (TupleType [tf,ta]) [(TuplePattern [pf,pa],f a)|(pf,f)<-fs,(pa,a)<-as]
+    Table (TupleType [tf,ta]) [(TuplePattern [pf,pa],f a) | (pf,f)<-fs,(pa,a)<-as]
 
 instance Monad V where
   return = pure
@@ -38,7 +38,7 @@ instance Monad V where
       rows (p1,v1) =
         case f v1 of
           Pure v2 -> [(TupleType [],(TuplePattern [p1,TuplePattern []],v2))]
-          Table ty2 bs2 -> [(ty2,(TuplePattern [p1,p2],v2))|(p2,v2)<-bs2]
+          Table ty2 bs2 -> [(ty2,(TuplePattern [p1,p2],v2)) | (p2,v2)<-bs2]
 
       simpT (TupleType [t1,TupleType []]) = t1
       simpT t = t

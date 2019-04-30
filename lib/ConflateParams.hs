@@ -31,7 +31,7 @@ conflateParams1 eqn (Grammar abs [cnc]) =
         Abstract an flags cats (concatMap transFun funs)
       where
         transFun d@(FunDef f ty) = maybe [d] newfuns (lookup f fs)
-          where newfuns fs = [FunDef f ty|f<-fs]
+          where newfuns fs = [FunDef f ty | f<-fs]
 
     transCnc (Concrete cn an flags params lincats lins) =
         (fs,Concrete cn an flags params' lincats lins')
@@ -81,7 +81,7 @@ conflateParams1 eqn (Grammar abs [cnc]) =
         combine [] = []
         combine ps = [Param (mergedParam q eqn) []]
           where
-            q:_ = [q|Param (ParamId q) []<-ps]
+            q:_ = [q | Param (ParamId q) []<-ps]
 
     ttrans vs = traverse trans vs
     t2trans vs = traverse2 trans vs
@@ -111,7 +111,7 @@ conflateParams1 eqn (Grammar abs [cnc]) =
     transP (Param c vs) = Param c <$> ttrans vs
 
     transP' c@(ParamId q) =
-      case [cs|cs<-[eqn],unqual q `elem` cs] of
+      case [cs | cs<-[eqn],unqual q `elem` cs] of
         [] -> --trace ("transP' "++show c)
               c
         [cs] -> mergedParam q cs
@@ -129,7 +129,7 @@ conflateParams1 eqn (Grammar abs [cnc]) =
     factorTable ty trs =
         (n,table ty (zip ps' (map (TableValue ty . zipTR ps) trrs)))
       where
-        (ps,rss) = unzip $ collectByFst [(transPat p,(p,v))|TableRow p v<-trs]
+        (ps,rss) = unzip $ collectByFst [(transPat p,(p,v)) | TableRow p v<-trs]
         n = maximum (map length rss)
         pad = take n . cycle
         ps' : _ = [prunedPats (map fst rs) | rs<-rss,length rs==n]
@@ -138,7 +138,7 @@ conflateParams1 eqn (Grammar abs [cnc]) =
     transAll vs =
         picks <$> t2trans (collectBySnd (zip [1..] vs))
       where
-        picks nvs= map snd $ sortBy (compare `on` fst) [(n,v)|(ns,v)<-nvs,n<-ns]
+        picks nvs= map snd $ sortBy (compare `on` fst) [(n,v) | (ns,v)<-nvs,n<-ns]
 
 
 
@@ -200,7 +200,7 @@ tableValue ty rows0 | ps == nub' ps = TableValue ty rows
 --transposeRows bs = curryRows . swapRows . uncurryRows $ bs
 --uncurryRows bs = [((p1,p2),v) | (p1,bs1) <- bs, (p2,v)<-bs1]
 --swapRows bs = [((p2,p1),v) | ((p1,p2),v)<-bs]
-curryRows bs = collectByFst [(p1,(p2,v))|((p1,p2),v)<-bs]
+curryRows bs = collectByFst [(p1,(p2,v)) | ((p1,p2),v)<-bs]
 {-
 allMatch ps1 ps2 = length ps1==length ps2 && and (zipWith match ps1 ps2)
 
@@ -217,10 +217,10 @@ match _ _ = False
 -}
 --------------------------------------------------------------------------------
 
-unzipRow row = unzip [(l,v)|RecordRow l v<-row]
+unzipRow row = unzip [(l,v) | RecordRow l v<-row]
 zipRow = zipWith RecordRow
 
-unzipTR tr = unzip [(p,v)|TableRow p v<-tr]
+unzipTR tr = unzip [(p,v) | TableRow p v<-tr]
 zipTR = zipWith TableRow
 
 requal (Unqual _) q = Unqual q

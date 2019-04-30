@@ -13,7 +13,7 @@ unqualifyGrammar g = mapQ unqual g
                           then Unqual n
                           else q
 
-    qs = fmap nub' $ M.fromListWith (++) [qual q|q<-nub' (listQ g)]
+    qs = fmap nub' $ M.fromListWith (++) [qual q | q<-nub' (listQ g)]
 
     qual (Qual m n) = (n,[Just m])
     qual (Unqual n) = (n,[Nothing])

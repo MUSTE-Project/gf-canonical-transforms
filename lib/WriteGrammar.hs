@@ -11,7 +11,7 @@ import GF.Grammar.Canonical(Grammar(..),ModId(..),abstrName,concName)
 writeGrammar prefix (Grammar abs cncs) =
   do createDirectoryIfMissing False prefix
      writeUTF8File (absPath abs) (render80 abs)
-     sequence_ [writeUTF8File (cncPath cnc) (render80 cnc)|cnc<-cncs]
+     sequence_ [writeUTF8File (cncPath cnc) (render80 cnc) | cnc<-cncs]
   where
     absPath = gfpath . abstrName 
     cncPath = gfpath . concName
