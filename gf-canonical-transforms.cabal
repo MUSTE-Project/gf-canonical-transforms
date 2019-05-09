@@ -1,5 +1,5 @@
 Name: gf-canonical-transforms
-Version: 0.1-git
+Version: 0.1
 Cabal-version: >=1.10
 Build-Type: Simple
 Maintainer: Thomas Hallgren
