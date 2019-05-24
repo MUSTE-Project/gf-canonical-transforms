@@ -2,7 +2,7 @@
 -- distinctions, introducing more top-level functions instead,
 -- along the ideas outlined in
 -- <https://github.com/MUSTE-Project/MULLE/wiki/Transforming-a-GF-grammar>.
-module ConflateParams(conflateParams,Eqn) where
+module ConflateParams(conflateParams,Eqn,Separators(..),defaultSeparators) where
 import Data.List(intercalate,partition,sortBy,transpose)
 import Data.Function(on)
 import Control.Monad(join)
@@ -13,16 +13,19 @@ import Utils
 import M1
 --import Debug.Trace
 
-conflateParams  :: [Eqn] -> Grammar -> Grammar
-conflateParams1 :: Eqn   -> Grammar -> Grammar
+conflateParams  :: Separators -> [Eqn] -> Grammar -> Grammar
+conflateParams1 :: Separators -> Eqn   -> Grammar -> Grammar
+
+data Separators = Sep { fnSep, orSep :: String }
+defaultSeparators = Sep {  fnSep="__", orSep="__OR__" }
 
 -- | A list of (unqualified) parameter names that should be conflated,
 -- e.g. @[\"Pl\",\"Sg\"]@
 type Eqn = [String] -- representing e.g. P1==P2==P3 
 
-conflateParams eqns gr = foldr conflateParams1 gr eqns
+conflateParams seps eqns gr = foldr (conflateParams1 seps) gr eqns
 
-conflateParams1 eqn (Grammar abs [cnc]) =
+conflateParams1 seps eqn (Grammar abs [cnc]) =
     Grammar (transAbs fs abs) [cnc']
   where
     (fs,cnc') = transCnc cnc
@@ -64,7 +67,7 @@ conflateParams1 eqn (Grammar abs [cnc]) =
                                  | (n,v')<-zip [1..] (nub' vs),
                                    let f'= funId f n]
 --}
-    funId (FunId f) n = FunId (f++"__"++show (n::Int))
+    funId (FunId f) n = FunId (f++fnSep seps++show (n::Int))
 
     unqual (Qual _ n) = n
     unqual (Unqual n) = n
@@ -79,7 +82,7 @@ conflateParams1 eqn (Grammar abs [cnc]) =
         inEqn _ = False
 
         combine [] = []
-        combine ps = [Param (mergedParam q eqn) []]
+        combine ps = [Param (mergedParam (orSep seps) q eqn) []]
           where
             q:_ = [q | Param (ParamId q) []<-ps]
 
@@ -114,7 +117,7 @@ conflateParams1 eqn (Grammar abs [cnc]) =
       case [cs | cs<-[eqn],unqual q `elem` cs] of
         [] -> --trace ("transP' "++show c)
               c
-        [cs] -> mergedParam q cs
+        [cs] -> mergedParam (orSep seps) q cs
 
     transTable ty trs =
         if n<=1
@@ -226,4 +229,4 @@ zipTR = zipWith TableRow
 requal (Unqual _) q = Unqual q
 requal (Qual m _) q = Qual m q
 
-mergedParam q cs = ParamId (requal q (intercalate "__OR__" cs))
+mergedParam sep q cs = ParamId (requal q (intercalate sep cs))
