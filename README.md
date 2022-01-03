@@ -1,4 +1,7 @@
+# Warning
 
+This is unsupported legacy code. No support is provided and the code is only
+present for documentation purposes.
 
 # gf-conflate-params
 
